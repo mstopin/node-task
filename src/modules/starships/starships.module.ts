@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { SwapiStarshipsRepository } from './impl/swapi.vehicles.repository';
+import { SwapiStarshipsRepository } from './impl/swapi.starships.repository';
 import { HttpModule } from '@nestjs/axios';
-import { StarshipsController } from './rest/vehicles.controller';
+import { StarshipsController } from './rest/starships.controller';
 import { StarshipsService } from './starships.service';
 import { STARSHIPS_REPOSITORY } from './starships.repository';
 

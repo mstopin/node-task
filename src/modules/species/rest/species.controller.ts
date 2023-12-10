@@ -12,6 +12,8 @@ import { ConfigService } from '@nestjs/config';
 import { SpeciesResponse } from './species.response';
 import { SpeciesService } from '../species.service';
 import { Species } from '../species';
+import { ApiNotFoundResponse, ApiOkResponse, ApiQuery } from '@nestjs/swagger';
+import { ApiOkCollectionResponse } from 'common/rest/api-ok-collection.response';
 
 @Controller('/species')
 export class SpeciesController {
@@ -25,6 +27,11 @@ export class SpeciesController {
   }
 
   @Get()
+  @ApiQuery({ name: 'page', required: false })
+  @ApiQuery({ name: 'name', required: false })
+  @ApiOkCollectionResponse(SpeciesResponse, {
+    description: 'Returns all species',
+  })
   async find(
     @Query(
       'page',
@@ -49,6 +56,13 @@ export class SpeciesController {
   }
 
   @Get(':id')
+  @ApiOkResponse({
+    description: 'Returns one species with specified id',
+    type: SpeciesResponse,
+  })
+  @ApiNotFoundResponse({
+    description: 'Species with specified id was not found',
+  })
   async findOneById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<SpeciesResponse> {
@@ -62,17 +76,17 @@ export class SpeciesController {
   }
 
   private mapDomainToResponse(species: Species): SpeciesResponse {
-    return {
-      name: species.name,
-      classification: species.classification,
-      designation: species.designation,
-      averageHeight: species.averageHeight,
-      averageLifespan: species.averageLifespan,
-      language: species.language,
-      homeworld: `${this.APP_URL}/planets/${species.homeworldId}`,
-      films: species.filmsIds.map((id) => `${this.APP_URL}/films/${id}`),
-      createdAt: species.createdAt,
-      editedAt: species.editedAt,
-    };
+    return new SpeciesResponse(
+      species.name,
+      species.classification,
+      species.designation,
+      species.averageHeight,
+      species.averageLifespan,
+      species.language,
+      `${this.APP_URL}/planets/${species.homeworldId}`,
+      species.filmsIds.map((id) => `${this.APP_URL}/films/${id}`),
+      species.createdAt,
+      species.editedAt,
+    );
   }
 }

@@ -7,11 +7,13 @@ import {
   ParseIntPipe,
   Query,
 } from '@nestjs/common';
-import { StarshipResponse } from './vehicles.response';
+import { StarshipResponse } from './starships.response';
 import { CollectionResponse } from 'common/rest/collection.response';
 import { ConfigService } from '@nestjs/config';
 import { StarshipsService } from '../starships.service';
 import { Starship } from '../starship';
+import { ApiNotFoundResponse, ApiOkResponse, ApiQuery } from '@nestjs/swagger';
+import { ApiOkCollectionResponse } from 'common/rest/api-ok-collection.response';
 
 @Controller('/starships')
 export class StarshipsController {
@@ -25,6 +27,12 @@ export class StarshipsController {
   }
 
   @Get()
+  @ApiQuery({ name: 'page', required: false })
+  @ApiQuery({ name: 'name', required: false })
+  @ApiQuery({ name: 'model', required: false })
+  @ApiOkCollectionResponse(StarshipResponse, {
+    description: 'Returns all starships',
+  })
   async find(
     @Query(
       'page',
@@ -32,9 +40,15 @@ export class StarshipsController {
       new DefaultValuePipe(1),
     )
     page: number,
+    @Query('name')
+    name?: string,
+    @Query('model')
+    model?: string,
   ): Promise<CollectionResponse<StarshipResponse>> {
     const collection = await this.starshipsService.find({
       page,
+      name,
+      model,
     });
 
     return {
@@ -46,6 +60,13 @@ export class StarshipsController {
   }
 
   @Get(':id')
+  @ApiOkResponse({
+    description: 'Returns one starship with specified id',
+    type: StarshipResponse,
+  })
+  @ApiNotFoundResponse({
+    description: 'Starship with specified id was not found',
+  })
   async findOneById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<StarshipResponse> {
@@ -59,18 +80,18 @@ export class StarshipsController {
   }
 
   private mapDomainToResponse(starship: Starship): StarshipResponse {
-    return {
-      name: starship.name,
-      model: starship.model,
-      class: starship.class,
-      manufacturer: starship.manufacturer,
-      cost: starship.cost,
-      length: starship.length,
-      crew: starship.crew,
-      passengers: starship.passengers,
-      films: starship.filmsIds.map((id) => `${this.APP_URL}/films/${id}`),
-      createdAt: starship.createdAt,
-      editedAt: starship.editedAt,
-    };
+    return new StarshipResponse(
+      starship.name,
+      starship.model,
+      starship.class,
+      starship.manufacturer,
+      starship.cost,
+      starship.length,
+      starship.crew,
+      starship.passengers,
+      starship.filmsIds.map((id) => `${this.APP_URL}/films/${id}`),
+      starship.createdAt,
+      starship.editedAt,
+    );
   }
 }

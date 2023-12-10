@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class VehicleResponse {
+export class StarshipResponse {
   @ApiProperty()
   public name: string;
 
@@ -14,22 +14,16 @@ export class VehicleResponse {
   public manufacturer: string;
 
   @ApiProperty()
-  public length: number;
+  public cost: number;
 
   @ApiProperty()
-  public cost: number;
+  public length: number;
 
   @ApiProperty()
   public crew: number;
 
   @ApiProperty()
   public passengers: number;
-
-  @ApiProperty()
-  public cargoCapacity: number;
-
-  @ApiProperty()
-  public consumables: string;
 
   @ApiProperty({ type: [String] })
   public films: string[];
@@ -45,12 +39,10 @@ export class VehicleResponse {
     model: string,
     classType: string,
     manufacturer: string,
-    length: number,
     cost: number,
+    length: number,
     crew: number,
     passengers: number,
-    cargoCapacity: number,
-    consumables: string,
     films: string[],
     createdAt: string,
     editedAt: string,
@@ -59,12 +51,10 @@ export class VehicleResponse {
     this.model = model;
     this.class = classType;
     this.manufacturer = manufacturer;
-    this.length = length;
     this.cost = cost;
+    this.length = length;
     this.crew = crew;
     this.passengers = passengers;
-    this.cargoCapacity = cargoCapacity;
-    this.consumables = consumables;
     this.films = films;
     this.createdAt = createdAt;
     this.editedAt = editedAt;

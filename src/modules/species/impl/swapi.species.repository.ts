@@ -11,7 +11,7 @@ import { SpeciesRepository } from '../species.repository';
 import {
   SwapiMultipleSpeciesResponse,
   SwapiSpeciesResponse,
-} from './swapi.planet.response';
+} from './swapi.species.response';
 import { Species } from '../species';
 import { SpeciesSearchCriteria } from '../species.search-criteria';
 

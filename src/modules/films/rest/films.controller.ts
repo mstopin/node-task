@@ -12,6 +12,8 @@ import { FilmResponse } from './films.response';
 import { CollectionResponse } from 'common/rest/collection.response';
 import { Film } from '../film';
 import { ConfigService } from '@nestjs/config';
+import { ApiNotFoundResponse, ApiOkResponse, ApiQuery } from '@nestjs/swagger';
+import { ApiOkCollectionResponse } from 'common/rest/api-ok-collection.response';
 
 @Controller('/films')
 export class FilmsController {
@@ -25,6 +27,9 @@ export class FilmsController {
   }
 
   @Get()
+  @ApiQuery({ name: 'page', required: false })
+  @ApiQuery({ name: 'title', required: false })
+  @ApiOkCollectionResponse(FilmResponse, { description: 'Returns all films' })
   async find(
     @Query(
       'page',
@@ -40,15 +45,20 @@ export class FilmsController {
       title,
     });
 
-    return {
-      count: collection.count,
-      page: collection.page,
-      numberPages: collection.numberPages,
-      data: collection.data.map(this.mapDomainToResponse.bind(this)),
-    };
+    return new CollectionResponse(
+      collection.count,
+      collection.page,
+      collection.numberPages,
+      collection.data.map(this.mapDomainToResponse.bind(this)),
+    );
   }
 
   @Get(':id')
+  @ApiOkResponse({
+    description: 'Returns one film with specified id',
+    type: FilmResponse,
+  })
+  @ApiNotFoundResponse({ description: 'Film with specified id was not found' })
   async findOneById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<FilmResponse> {
@@ -62,21 +72,19 @@ export class FilmsController {
   }
 
   private mapDomainToResponse(film: Film): FilmResponse {
-    return {
-      title: film.title,
-      episodeId: film.episodeId,
-      openingCrawl: film.openingCrawl,
-      director: film.director,
-      producer: film.producer,
-      releasedAt: film.releasedAt,
-      planets: film.planetsIds.map((id) => `${this.APP_URL}/planets/${id}`),
-      starships: film.starshipsIds.map(
-        (id) => `${this.APP_URL}/starships/${id}`,
-      ),
-      vehicles: film.vehiclesIds.map((id) => `${this.APP_URL}/vehicles/${id}`),
-      species: film.speciesIds.map((id) => `${this.APP_URL}/species/${id}`),
-      createdAt: film.createdAt,
-      editedAt: film.editedAt,
-    };
+    return new FilmResponse(
+      film.title,
+      film.episodeId,
+      film.openingCrawl,
+      film.director,
+      film.producer,
+      film.releasedAt,
+      film.planetsIds.map((id) => `${this.APP_URL}/planets/${id}`),
+      film.starshipsIds.map((id) => `${this.APP_URL}/starships/${id}`),
+      film.vehiclesIds.map((id) => `${this.APP_URL}/vehicles/${id}`),
+      film.speciesIds.map((id) => `${this.APP_URL}/species/${id}`),
+      film.createdAt,
+      film.editedAt,
+    );
   }
 }

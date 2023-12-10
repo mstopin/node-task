@@ -12,6 +12,8 @@ import { VehicleResponse } from './vehicles.response';
 import { CollectionResponse } from 'common/rest/collection.response';
 import { Vehicle } from '../vehicle';
 import { ConfigService } from '@nestjs/config';
+import { ApiNotFoundResponse, ApiOkResponse, ApiQuery } from '@nestjs/swagger';
+import { ApiOkCollectionResponse } from 'common/rest/api-ok-collection.response';
 
 @Controller('/vehicles')
 export class VehiclesController {
@@ -25,6 +27,12 @@ export class VehiclesController {
   }
 
   @Get()
+  @ApiQuery({ name: 'page', required: false })
+  @ApiQuery({ name: 'name', required: false })
+  @ApiQuery({ name: 'model', required: false })
+  @ApiOkCollectionResponse(VehicleResponse, {
+    description: 'Returns all vehicles',
+  })
   async find(
     @Query(
       'page',
@@ -52,6 +60,13 @@ export class VehiclesController {
   }
 
   @Get(':id')
+  @ApiOkResponse({
+    description: 'Returns one vehicle with specified id',
+    type: VehicleResponse,
+  })
+  @ApiNotFoundResponse({
+    description: 'Vehicle with specified id was not found',
+  })
   async findOneById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<VehicleResponse> {
@@ -65,20 +80,20 @@ export class VehiclesController {
   }
 
   private mapDomainToResponse(vehicle: Vehicle): VehicleResponse {
-    return {
-      name: vehicle.name,
-      model: vehicle.model,
-      class: vehicle.class,
-      manufacturer: vehicle.manufacturer,
-      length: vehicle.length,
-      cost: vehicle.cost,
-      crew: vehicle.crew,
-      passengers: vehicle.passengers,
-      cargoCapacity: vehicle.cargoCapacity,
-      consumables: vehicle.consumables,
-      films: vehicle.filmsIds.map((id) => `${this.APP_URL}/films/${id}`),
-      createdAt: vehicle.createdAt,
-      editedAt: vehicle.editedAt,
-    };
+    return new VehicleResponse(
+      vehicle.name,
+      vehicle.model,
+      vehicle.class,
+      vehicle.manufacturer,
+      vehicle.length,
+      vehicle.cost,
+      vehicle.crew,
+      vehicle.passengers,
+      vehicle.cargoCapacity,
+      vehicle.consumables,
+      vehicle.filmsIds.map((id) => `${this.APP_URL}/films/${id}`),
+      vehicle.createdAt,
+      vehicle.editedAt,
+    );
   }
 }

@@ -12,6 +12,8 @@ import { CollectionResponse } from 'common/rest/collection.response';
 import { ConfigService } from '@nestjs/config';
 import { PlanetsResponse } from './planets.response';
 import { Planet } from '../planet';
+import { ApiNotFoundResponse, ApiOkResponse, ApiQuery } from '@nestjs/swagger';
+import { ApiOkCollectionResponse } from 'common/rest/api-ok-collection.response';
 
 @Controller('/planets')
 export class PlanetsController {
@@ -25,6 +27,11 @@ export class PlanetsController {
   }
 
   @Get()
+  @ApiQuery({ name: 'page', required: false })
+  @ApiQuery({ name: 'name', required: false })
+  @ApiOkCollectionResponse(PlanetsResponse, {
+    description: 'Returns all planets',
+  })
   async find(
     @Query(
       'page',
@@ -49,6 +56,13 @@ export class PlanetsController {
   }
 
   @Get(':id')
+  @ApiOkResponse({
+    description: 'Returns one planet with specified id',
+    type: PlanetsResponse,
+  })
+  @ApiNotFoundResponse({
+    description: 'Planet with specified id was not found',
+  })
   async findOneById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<PlanetsResponse> {
@@ -62,16 +76,16 @@ export class PlanetsController {
   }
 
   private mapDomainToResponse(planet: Planet): PlanetsResponse {
-    return {
-      name: planet.name,
-      diameter: planet.diameter,
-      rotationPeriod: planet.rotationPeriod,
-      orbitalPeriod: planet.orbitalPeriod,
-      gravity: planet.gravity,
-      population: planet.population,
-      films: planet.filmsIds.map((id) => `${this.APP_URL}/films/${id}`),
-      createdAt: planet.createdAt,
-      editedAt: planet.editedAt,
-    };
+    return new PlanetsResponse(
+      planet.name,
+      planet.diameter,
+      planet.rotationPeriod,
+      planet.orbitalPeriod,
+      planet.gravity,
+      planet.population,
+      planet.filmsIds.map((id) => `${this.APP_URL}/films/${id}`),
+      planet.createdAt,
+      planet.editedAt,
+    );
   }
 }

@@ -25,7 +25,7 @@ export class SwapiStarshipsRepository
     @Inject(CACHE_MANAGER) private readonly cache: Cache,
     configService: ConfigService,
   ) {
-    super(configService, 'vehicles');
+    super(configService, 'starships');
   }
 
   private mapResponseToDomain(response: SwapiStarshipResponse): Starship {
@@ -45,7 +45,9 @@ export class SwapiStarshipsRepository
   }
 
   async find(criteria: StarshipsSearchCriteria): Promise<Collection<Starship>> {
-    const cacheKey = `vehicles:page=${criteria.page}`;
+    const cacheKey = `starships:page=${criteria.page}${
+      criteria.name ? `:name=${criteria.name}` : ''
+    }${criteria.model ? `:model=${criteria.model}` : ''}`;
     try {
       const cachedStarshipJson = await this.cache.get<string | null>(cacheKey);
       if (cachedStarshipJson) {

@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
-import { SwapiSpeciesRepository } from './impl/swapi.planets.repository';
+import { SwapiSpeciesRepository } from './impl/swapi.species.repository';
 import { SPECIES_REPOSITORY } from './species.repository';
-import { SpeciesController } from './rest/species.controller';
 import { SpeciesService } from './species.service';
+import { SpeciesController } from './rest/species.controller';
 
 @Module({
   imports: [HttpModule],
