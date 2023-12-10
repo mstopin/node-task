@@ -1,4 +1,4 @@
-export abstract class Repository<T> {
-  abstract findOneById(id: number): Promise<T | null>;
-  abstract find(): Promise<T[]>;
+export interface Repository<T> {
+  findOneById(id: number): Promise<T | null>;
+  find(): Promise<T[]>;
 }

@@ -4,7 +4,9 @@ import { Film } from '../film';
 import { FilmsRepository } from '../films.repository';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { Cache } from 'cache-manager';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 interface SwapiFilmResponse {
   title: string;
@@ -30,24 +32,34 @@ interface SwapiFilmsReponse {
 }
 
 @Injectable()
-export class SwapiFilmsRepository extends FilmsRepository {
+export class SwapiFilmsRepository implements FilmsRepository {
   private readonly URL: string;
 
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: HttpService,
+    @Inject(CACHE_MANAGER) private readonly cache: Cache,
   ) {
-    super();
     this.URL = `${this.configService.getOrThrow('SWAPI_URL')}/films/`;
   }
 
   async findOneById(id: number): Promise<Film | null> {
+    const cacheKey = `films:${id}`;
+
     try {
+      const cachedFilmJson = await this.cache.get<string | null>(cacheKey);
+      if (cachedFilmJson) {
+        return JSON.parse(cachedFilmJson);
+      }
+
       const response = await firstValueFrom(
         this.httpService.get<SwapiFilmResponse>(this.URL + id),
       );
 
-      return this.responseToDomain(id, response.data);
+      const film = this.responseToDomain(id, response.data);
+      await this.cache.set(cacheKey, JSON.stringify(film));
+
+      return film;
     } catch {
       return null;
     }

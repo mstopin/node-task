@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { FilmsService } from './films.service';
-import { FilmsRepository } from './films.repository';
+import { FILMS_REPOSITORY } from './films.repository';
 import { SwapiFilmsRepository } from './impl/swapi.films.repository';
-import { FilmsController } from './films.controller';
+import { FilmsController } from './rest/films.controller';
 import { HttpModule } from '@nestjs/axios';
 
 @Module({
@@ -11,7 +11,7 @@ import { HttpModule } from '@nestjs/axios';
   providers: [
     FilmsService,
     {
-      provide: FilmsRepository,
+      provide: FILMS_REPOSITORY,
       useClass: SwapiFilmsRepository,
     },
   ],

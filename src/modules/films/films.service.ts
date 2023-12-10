@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Film } from './film';
-import { FilmsRepository } from './films.repository';
+import { FILMS_REPOSITORY, FilmsRepository } from './films.repository';
 
 @Injectable()
 export class FilmsService {
-  constructor(private readonly filmsRepository: FilmsRepository) {}
+  constructor(
+    @Inject(FILMS_REPOSITORY) private readonly filmsRepository: FilmsRepository,
+  ) {}
 
   async findOneById(id: number): Promise<Film | null> {
     return await this.filmsRepository.findOneById(id);
