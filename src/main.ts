@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { FilmsModule } from 'modules/films/films.module';
 
 @Module({
-  imports: [FilmsModule],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), FilmsModule],
 })
 class AppModule {}
 
