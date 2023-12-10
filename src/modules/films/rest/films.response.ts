@@ -1,5 +1,4 @@
 export interface FilmResponse {
-  id: number;
   title: string;
   episodeId: number;
   openingCrawl: string;

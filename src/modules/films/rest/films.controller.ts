@@ -63,7 +63,6 @@ export class FilmsController {
 
   private mapDomainToResponse(film: Film): FilmResponse {
     return {
-      id: film.id,
       title: film.title,
       episodeId: film.episodeId,
       openingCrawl: film.openingCrawl,

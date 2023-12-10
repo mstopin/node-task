@@ -1,5 +1,4 @@
 import { HttpService } from '@nestjs/axios';
-import { URL as Url } from 'node:url';
 
 import { Film } from '../film';
 import { FilmsRepository } from '../films.repository';
@@ -11,30 +10,23 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { FilmsSearchCriteria } from '../films.search-criteria';
 import { Collection } from '../../../common/collection';
 import { SwapiFilmResponse, SwapiFilmsReponse } from './swapi.film.response';
+import { SwapiRepository } from 'common/infra/swapi.repository';
 
 @Injectable()
-export class SwapiFilmsRepository implements FilmsRepository {
-  private readonly URL: string;
-
+export class SwapiFilmsRepository
+  extends SwapiRepository
+  implements FilmsRepository
+{
   constructor(
-    private readonly configService: ConfigService,
     private readonly httpService: HttpService,
     @Inject(CACHE_MANAGER) private readonly cache: Cache,
+    configService: ConfigService,
   ) {
-    this.URL = `${this.configService.getOrThrow('SWAPI_URL')}/films/`;
+    super(configService, 'films');
   }
 
-  private extractIdsFromUrls(urls: string[]): number[] {
-    return urls.map((u) => {
-      const match = u.match(/(\d+)\/$/);
-
-      return match && match[1] ? Number(match[1]) : 0;
-    });
-  }
-
-  private mapResponseToDomain(id: number, response: SwapiFilmResponse): Film {
+  private mapResponseToDomain(response: SwapiFilmResponse): Film {
     return {
-      id,
       title: response.title,
       episodeId: response.episode_id,
       openingCrawl: response.opening_crawl,
@@ -48,16 +40,6 @@ export class SwapiFilmsRepository implements FilmsRepository {
       createdAt: response.created,
       editedAt: response.edited,
     };
-  }
-
-  private buildUrlForSearchCriteria(criteria: FilmsSearchCriteria) {
-    const url = new Url(`${this.URL}?page=${criteria.page}`);
-
-    if (criteria.title) {
-      url.searchParams.append('search', criteria.title);
-    }
-
-    return url.href;
   }
 
   async find(criteria: FilmsSearchCriteria): Promise<Collection<Film>> {
@@ -78,7 +60,7 @@ export class SwapiFilmsRepository implements FilmsRepository {
       );
 
       const { count, results } = response.data;
-      const films = results.map((r, i) => this.mapResponseToDomain(i + 1, r));
+      const films = results.map(this.mapResponseToDomain.bind(this));
       const collection = new Collection(count, criteria.page, films);
       await this.cache.set(cacheKey, JSON.stringify(collection));
 
@@ -101,7 +83,7 @@ export class SwapiFilmsRepository implements FilmsRepository {
         this.httpService.get<SwapiFilmResponse>(this.URL + id),
       );
 
-      const film = this.mapResponseToDomain(id, response.data);
+      const film = this.mapResponseToDomain(response.data);
       await this.cache.set(cacheKey, JSON.stringify(film));
 
       return film;
