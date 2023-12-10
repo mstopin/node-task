@@ -4,8 +4,15 @@ import { FilmsModule } from 'modules/films/films.module';
 import { ConfigurationModule } from 'configuration.module';
 import { VehiclesModule } from 'modules/vehicles/vehicles.module';
 import { PlanetsModule } from 'modules/planets/planets.module';
+import { SpeciesModule } from 'modules/species/species.module';
 @Module({
-  imports: [ConfigurationModule, FilmsModule, VehiclesModule, PlanetsModule],
+  imports: [
+    ConfigurationModule,
+    FilmsModule,
+    VehiclesModule,
+    PlanetsModule,
+    SpeciesModule,
+  ],
 })
 class AppModule {}
 

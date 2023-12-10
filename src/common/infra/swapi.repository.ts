@@ -8,12 +8,14 @@ export abstract class SwapiRepository {
     this.URL = `${configService.getOrThrow('SWAPI_URL')}/${endpoint}/`;
   }
 
-  protected extractIdsFromUrls(urls: string[]): number[] {
-    return urls.map((u) => {
-      const match = u.match(/(\d+)\/$/);
+  protected extractIdFromUrl(url: string): number {
+    const match = url.match(/(\d+)\/$/);
 
-      return match && match[1] ? Number(match[1]) : 0;
-    });
+    return match && match[1] ? Number(match[1]) : 0;
+  }
+
+  protected extractIdsFromUrls(urls: string[]): number[] {
+    return urls.map(this.extractIdFromUrl.bind(this));
   }
 
   protected buildUrlForSearchCriteria(criteria: SearchCriteria) {
