@@ -16,8 +16,9 @@ import { RedisOptions } from 'ioredis';
           store: redisStore,
           host: configService.getOrThrow('REDIS_HOST'),
           port: Number(configService.getOrThrow('REDIS_PORT')),
-          ttl: Number(configService.getOrThrow('REDIS_DEFAULT_TTL')),
-          keepAlive: -1,
+          ttl:
+            Number(configService.getOrThrow('REDIS_DEFAULT_TTL_SECONDS')) *
+            1000,
         };
       },
     }),
