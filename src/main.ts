@@ -5,6 +5,7 @@ import { ConfigurationModule } from 'configuration.module';
 import { VehiclesModule } from 'modules/vehicles/vehicles.module';
 import { PlanetsModule } from 'modules/planets/planets.module';
 import { SpeciesModule } from 'modules/species/species.module';
+import { StarshipsModule } from 'modules/starships/starships.module';
 @Module({
   imports: [
     ConfigurationModule,
@@ -12,6 +13,7 @@ import { SpeciesModule } from 'modules/species/species.module';
     VehiclesModule,
     PlanetsModule,
     SpeciesModule,
+    StarshipsModule,
   ],
 })
 class AppModule {}
