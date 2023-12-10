@@ -1,4 +1,11 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  DefaultValuePipe,
+  Get,
+  Param,
+  ParseIntPipe,
+  Query,
+} from '@nestjs/common';
 import { FilmsService } from '../films.service';
 
 @Controller('/films')
@@ -6,8 +13,20 @@ export class FilmsController {
   constructor(private readonly filmsService: FilmsService) {}
 
   @Get()
-  async find() {
-    return await this.filmsService.find();
+  async find(
+    @Query(
+      'page',
+      new ParseIntPipe({ optional: true }),
+      new DefaultValuePipe(1),
+    )
+    page: number,
+    @Query('title')
+    title?: string,
+  ) {
+    return await this.filmsService.find({
+      page,
+      title,
+    });
   }
 
   @Get(':id')

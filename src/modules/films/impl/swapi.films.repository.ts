@@ -1,4 +1,5 @@
 import { HttpService } from '@nestjs/axios';
+import { URL as Url } from 'node:url';
 
 import { Film } from '../film';
 import { FilmsRepository } from '../films.repository';
@@ -7,6 +8,7 @@ import { firstValueFrom } from 'rxjs';
 import { Inject, Injectable } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { FilmsSearchCriteria } from '../films.search-criteria';
 
 interface SwapiFilmResponse {
   title: string;
@@ -43,40 +45,12 @@ export class SwapiFilmsRepository implements FilmsRepository {
     this.URL = `${this.configService.getOrThrow('SWAPI_URL')}/films/`;
   }
 
-  async findOneById(id: number): Promise<Film | null> {
-    const cacheKey = `films:${id}`;
+  private extractIdsFromUrls(urls: string[]): number[] {
+    return urls.map((u) => {
+      const match = u.match(/(\d+)\/$/);
 
-    try {
-      const cachedFilmJson = await this.cache.get<string | null>(cacheKey);
-      if (cachedFilmJson) {
-        return JSON.parse(cachedFilmJson);
-      }
-
-      const response = await firstValueFrom(
-        this.httpService.get<SwapiFilmResponse>(this.URL + id),
-      );
-
-      const film = this.responseToDomain(id, response.data);
-      await this.cache.set(cacheKey, JSON.stringify(film));
-
-      return film;
-    } catch {
-      return null;
-    }
-  }
-
-  async find(): Promise<Film[]> {
-    try {
-      const response = await firstValueFrom(
-        this.httpService.get<SwapiFilmsReponse>(this.URL),
-      );
-
-      return response.data.results.map((r, i) => {
-        return this.responseToDomain(i + 1, r);
-      });
-    } catch {
-      return [];
-    }
+      return match && match[1] ? Number(match[1]) : 0;
+    });
   }
 
   private responseToDomain(id: number, response: SwapiFilmResponse): Film {
@@ -98,11 +72,51 @@ export class SwapiFilmsRepository implements FilmsRepository {
     };
   }
 
-  private extractIdsFromUrls(urls: string[]): number[] {
-    return urls.map((u) => {
-      const match = u.match(/(\d+)\/$/);
+  private buildUrlForSearchCriteria(criteria: FilmsSearchCriteria) {
+    const url = new Url(`${this.URL}?page=${criteria.page}`);
 
-      return match && match[1] ? Number(match[1]) : 0;
-    });
+    if (criteria.title) {
+      url.searchParams.append('search', criteria.title);
+    }
+
+    return url.href;
+  }
+
+  async find(criteria: FilmsSearchCriteria): Promise<Film[]> {
+    try {
+      const response = await firstValueFrom(
+        this.httpService.get<SwapiFilmsReponse>(
+          this.buildUrlForSearchCriteria(criteria),
+        ),
+      );
+
+      return response.data.results.map((r, i) => {
+        return this.responseToDomain(i + 1, r);
+      });
+    } catch {
+      return [];
+    }
+  }
+
+  async findOneById(id: number): Promise<Film | null> {
+    const cacheKey = `films:${id}`;
+
+    try {
+      const cachedFilmJson = await this.cache.get<string | null>(cacheKey);
+      if (cachedFilmJson) {
+        return JSON.parse(cachedFilmJson);
+      }
+
+      const response = await firstValueFrom(
+        this.httpService.get<SwapiFilmResponse>(this.URL + id),
+      );
+
+      const film = this.responseToDomain(id, response.data);
+      await this.cache.set(cacheKey, JSON.stringify(film));
+
+      return film;
+    } catch {
+      return null;
+    }
   }
 }

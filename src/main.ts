@@ -16,7 +16,8 @@ import { RedisOptions } from 'ioredis';
           store: redisStore,
           host: configService.getOrThrow('REDIS_HOST'),
           port: Number(configService.getOrThrow('REDIS_PORT')),
-          lazyConnect: false,
+          ttl: Number(configService.getOrThrow('REDIS_DEFAULT_TTL')),
+          keepAlive: -1,
         };
       },
     }),
