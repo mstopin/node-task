@@ -1,4 +1,4 @@
-export interface Film {
+export interface FilmResponse {
   id: number;
   title: string;
   episodeId: number;
@@ -6,10 +6,10 @@ export interface Film {
   director: string;
   producer: string;
   releasedAt: string;
-  planetsIds: number[];
-  starshipsIds: number[];
-  vehiclesIds: number[];
-  speciesIds: number[];
+  planets: string[];
+  starships: string[];
+  vehicles: string[];
+  species: string[];
   createdAt: string;
   editedAt: string;
 }

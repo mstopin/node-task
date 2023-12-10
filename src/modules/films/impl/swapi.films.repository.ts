@@ -9,29 +9,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { FilmsSearchCriteria } from '../films.search-criteria';
-
-interface SwapiFilmResponse {
-  title: string;
-  episode_id: number;
-  opening_crawl: string;
-  director: string;
-  producer: string;
-  release_date: string;
-  species: string[];
-  starships: string[];
-  vehicles: string[];
-  characters: string[];
-  planets: string[];
-  created: string;
-  edited: string;
-}
-
-interface SwapiFilmsReponse {
-  count: number;
-  next: string;
-  previous: string;
-  results: SwapiFilmResponse[];
-}
+import { Collection } from '../../../common/collection';
+import { SwapiFilmResponse, SwapiFilmsReponse } from './swapi.film.response';
 
 @Injectable()
 export class SwapiFilmsRepository implements FilmsRepository {
@@ -53,7 +32,7 @@ export class SwapiFilmsRepository implements FilmsRepository {
     });
   }
 
-  private responseToDomain(id: number, response: SwapiFilmResponse): Film {
+  private mapResponseToDomain(id: number, response: SwapiFilmResponse): Film {
     return {
       id,
       title: response.title,
@@ -62,7 +41,6 @@ export class SwapiFilmsRepository implements FilmsRepository {
       director: response.director,
       producer: response.producer,
       releasedAt: response.release_date,
-      charactersIds: this.extractIdsFromUrls(response.characters),
       planetsIds: this.extractIdsFromUrls(response.planets),
       starshipsIds: this.extractIdsFromUrls(response.starships),
       vehiclesIds: this.extractIdsFromUrls(response.vehicles),
@@ -82,24 +60,36 @@ export class SwapiFilmsRepository implements FilmsRepository {
     return url.href;
   }
 
-  async find(criteria: FilmsSearchCriteria): Promise<Film[]> {
+  async find(criteria: FilmsSearchCriteria): Promise<Collection<Film>> {
+    const cacheKey = `films:page=${criteria.page}${
+      criteria.title ? `:title=${criteria.title}` : ''
+    }`;
+
     try {
+      const cachedFilmsJson = await this.cache.get<string | null>(cacheKey);
+      if (cachedFilmsJson) {
+        return Object.assign(Collection.empty(), JSON.parse(cachedFilmsJson));
+      }
+
       const response = await firstValueFrom(
         this.httpService.get<SwapiFilmsReponse>(
           this.buildUrlForSearchCriteria(criteria),
         ),
       );
 
-      return response.data.results.map((r, i) => {
-        return this.responseToDomain(i + 1, r);
-      });
+      const { count, results } = response.data;
+      const films = results.map((r, i) => this.mapResponseToDomain(i + 1, r));
+      const collection = new Collection(count, criteria.page, films);
+      await this.cache.set(cacheKey, JSON.stringify(collection));
+
+      return collection;
     } catch {
-      return [];
+      return Collection.empty();
     }
   }
 
   async findOneById(id: number): Promise<Film | null> {
-    const cacheKey = `films:${id}`;
+    const cacheKey = `films:id=${id}`;
 
     try {
       const cachedFilmJson = await this.cache.get<string | null>(cacheKey);
@@ -111,7 +101,7 @@ export class SwapiFilmsRepository implements FilmsRepository {
         this.httpService.get<SwapiFilmResponse>(this.URL + id),
       );
 
-      const film = this.responseToDomain(id, response.data);
+      const film = this.mapResponseToDomain(id, response.data);
       await this.cache.set(cacheKey, JSON.stringify(film));
 
       return film;
