@@ -5,7 +5,7 @@ export interface Species {
   averageHeight: number;
   averageLifespan: number;
   language: string;
-  homeworldId: number;
+  homeworldId: number | null;
   filmsIds: number[];
   createdAt: string;
   editedAt: string;

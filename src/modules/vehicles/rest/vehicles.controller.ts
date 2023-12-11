@@ -9,11 +9,11 @@ import {
 } from '@nestjs/common';
 import { VehiclesService } from '../vehicles.service';
 import { VehicleResponse } from './vehicles.response';
-import { CollectionResponse } from 'common/rest/collection.response';
+import { CollectionResponse } from '../../../common/rest/collection.response';
 import { Vehicle } from '../vehicle';
 import { ConfigService } from '@nestjs/config';
 import { ApiNotFoundResponse, ApiOkResponse, ApiQuery } from '@nestjs/swagger';
-import { ApiOkCollectionResponse } from 'common/rest/api-ok-collection.response';
+import { ApiOkCollectionResponse } from '../../../common/rest/api-ok-collection.response';
 
 @Controller('/vehicles')
 export class VehiclesController {

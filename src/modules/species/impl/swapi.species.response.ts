@@ -7,7 +7,7 @@ export interface SwapiSpeciesResponse {
   average_height: string;
   average_lifespan: string;
   language: string;
-  homeworld: string;
+  homeworld: string | null;
   films: string[];
   created: string;
   edited: string;

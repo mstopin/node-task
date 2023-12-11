@@ -13,7 +13,7 @@ import {
   SwapiVehicleResponse,
   SwapiVehiclesReponse,
 } from './swapi.vehicle.response';
-import { SwapiRepository } from 'common/infra/swapi.repository';
+import { SwapiRepository } from '../../../common/infra/swapi.repository';
 
 @Injectable()
 export class SwapiVehiclesRepository
@@ -32,7 +32,7 @@ export class SwapiVehiclesRepository
     return {
       name: response.name,
       model: response.model,
-      class: response.class,
+      class: response.vehicle_class,
       manufacturer: response.manufacturer,
       length: Number(response.length),
       cost: Number(response.cost_in_credits),

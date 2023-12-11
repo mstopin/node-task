@@ -36,7 +36,9 @@ export class SwapiSpeciesRepository
       averageHeight: Number(response.average_height),
       averageLifespan: Number(response.average_lifespan),
       language: response.language,
-      homeworldId: this.extractIdFromUrl(response.homeworld),
+      homeworldId: response.homeworld
+        ? this.extractIdFromUrl(response.homeworld)
+        : null,
       filmsIds: this.extractIdsFromUrls(response.films),
       createdAt: response.created,
       editedAt: response.edited,

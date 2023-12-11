@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { Collection } from 'common/collection';
-import { SearchCriteria } from 'common/search-criteria';
+import { Collection } from '../../common/collection';
+import { SearchCriteria } from '../../common/search-criteria';
 import { URL } from 'node:url';
 export abstract class SwapiRepository<T> {
   protected readonly URL: string;

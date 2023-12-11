@@ -3,7 +3,7 @@ import { SwapiCollectionResponse } from '../../../common/infra/swapi.collection.
 export interface SwapiVehicleResponse {
   name: string;
   model: string;
-  class: string;
+  vehicle_class: string;
   manufacturer: string;
   length: string;
   cost_in_credits: string;

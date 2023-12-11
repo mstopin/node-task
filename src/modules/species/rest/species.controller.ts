@@ -7,13 +7,13 @@ import {
   ParseIntPipe,
   Query,
 } from '@nestjs/common';
-import { CollectionResponse } from 'common/rest/collection.response';
+import { CollectionResponse } from '../../../common/rest/collection.response';
 import { ConfigService } from '@nestjs/config';
 import { SpeciesResponse } from './species.response';
 import { SpeciesService } from '../species.service';
 import { Species } from '../species';
 import { ApiNotFoundResponse, ApiOkResponse, ApiQuery } from '@nestjs/swagger';
-import { ApiOkCollectionResponse } from 'common/rest/api-ok-collection.response';
+import { ApiOkCollectionResponse } from '../../../common/rest/api-ok-collection.response';
 
 @Controller('/species')
 export class SpeciesController {
@@ -83,7 +83,9 @@ export class SpeciesController {
       species.averageHeight,
       species.averageLifespan,
       species.language,
-      `${this.APP_URL}/planets/${species.homeworldId}`,
+      species.homeworldId
+        ? `${this.APP_URL}/planets/${species.homeworldId}`
+        : null,
       species.filmsIds.map((id) => `${this.APP_URL}/films/${id}`),
       species.createdAt,
       species.editedAt,

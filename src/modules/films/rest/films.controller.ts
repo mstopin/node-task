@@ -9,11 +9,11 @@ import {
 } from '@nestjs/common';
 import { FilmsService } from '../films.service';
 import { FilmResponse } from './films.response';
-import { CollectionResponse } from 'common/rest/collection.response';
+import { CollectionResponse } from '../../../common/rest/collection.response';
 import { Film } from '../film';
 import { ConfigService } from '@nestjs/config';
 import { ApiNotFoundResponse, ApiOkResponse, ApiQuery } from '@nestjs/swagger';
-import { ApiOkCollectionResponse } from 'common/rest/api-ok-collection.response';
+import { ApiOkCollectionResponse } from '../../../common/rest/api-ok-collection.response';
 import { UniqueWordsResponse } from './unique-words.response';
 import { MostPopularCharactersResponse } from './most-popular-characters.response';
 

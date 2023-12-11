@@ -8,12 +8,12 @@ import {
   Query,
 } from '@nestjs/common';
 import { StarshipResponse } from './starships.response';
-import { CollectionResponse } from 'common/rest/collection.response';
+import { CollectionResponse } from '../../../common/rest/collection.response';
 import { ConfigService } from '@nestjs/config';
 import { StarshipsService } from '../starships.service';
 import { Starship } from '../starship';
 import { ApiNotFoundResponse, ApiOkResponse, ApiQuery } from '@nestjs/swagger';
-import { ApiOkCollectionResponse } from 'common/rest/api-ok-collection.response';
+import { ApiOkCollectionResponse } from '../../../common/rest/api-ok-collection.response';
 
 @Controller('/starships')
 export class StarshipsController {

@@ -20,7 +20,7 @@ export class SpeciesResponse {
   public language: string;
 
   @ApiProperty()
-  public homeworld: string;
+  public homeworld: string | null;
 
   @ApiProperty({ type: [String] })
   public films: string[];
@@ -38,7 +38,7 @@ export class SpeciesResponse {
     averageHeight: number,
     averageLifespan: number,
     language: string,
-    homeworld: string,
+    homeworld: string | null,
     films: string[],
     createdAt: string,
     editedAt: string,

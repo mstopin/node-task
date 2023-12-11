@@ -8,12 +8,12 @@ import {
   Query,
 } from '@nestjs/common';
 import { PlanetsService } from '../planets.service';
-import { CollectionResponse } from 'common/rest/collection.response';
+import { CollectionResponse } from '../../../common/rest/collection.response';
 import { ConfigService } from '@nestjs/config';
 import { PlanetsResponse } from './planets.response';
 import { Planet } from '../planet';
 import { ApiNotFoundResponse, ApiOkResponse, ApiQuery } from '@nestjs/swagger';
-import { ApiOkCollectionResponse } from 'common/rest/api-ok-collection.response';
+import { ApiOkCollectionResponse } from '../../../common/rest/api-ok-collection.response';
 
 @Controller('/planets')
 export class PlanetsController {
