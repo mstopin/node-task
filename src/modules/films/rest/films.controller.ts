@@ -40,6 +40,14 @@ export class FilmsController {
     return new UniqueWordsResponse(openingsUniqueWords);
   }
 
+  @Get('/most-popular-openings-character')
+  async findMostPopularOpeningsCharacter() {
+    const findMostPopularOpeningsCharacter =
+      await this.filmsService.findMostPopularOpeningsCharacter();
+
+    return findMostPopularOpeningsCharacter;
+  }
+
   @Get()
   @ApiQuery({ name: 'page', required: false })
   @ApiQuery({ name: 'title', required: false })
@@ -89,7 +97,7 @@ export class FilmsController {
     return new FilmResponse(
       film.title,
       film.episodeId,
-      film.openingCrawl,
+      film.opening,
       film.director,
       film.producer,
       film.releasedAt,

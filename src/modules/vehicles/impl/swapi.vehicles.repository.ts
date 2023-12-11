@@ -17,7 +17,7 @@ import { SwapiRepository } from 'common/infra/swapi.repository';
 
 @Injectable()
 export class SwapiVehiclesRepository
-  extends SwapiRepository
+  extends SwapiRepository<Vehicle>
   implements VehiclesRepository
 {
   constructor(

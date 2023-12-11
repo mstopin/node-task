@@ -1,7 +1,9 @@
+import { FilmOpening } from './film-opening';
+
 export interface Film {
   title: string;
   episodeId: number;
-  openingCrawl: string;
+  opening: FilmOpening;
   director: string;
   producer: string;
   releasedAt: string;

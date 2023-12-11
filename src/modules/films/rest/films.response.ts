@@ -8,7 +8,7 @@ export class FilmResponse {
   public episodeId: number;
 
   @ApiProperty()
-  public openingCrawl: string;
+  public opening: string;
 
   @ApiProperty()
   public director: string;
@@ -53,7 +53,7 @@ export class FilmResponse {
   ) {
     this.title = title;
     this.episodeId = episodeId;
-    this.openingCrawl = openingCrawl;
+    this.opening = openingCrawl;
     this.director = director;
     this.producer = producer;
     this.releasedAt = releasedAt;

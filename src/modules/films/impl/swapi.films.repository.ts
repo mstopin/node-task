@@ -14,7 +14,7 @@ import { SwapiRepository } from 'common/infra/swapi.repository';
 
 @Injectable()
 export class SwapiFilmsRepository
-  extends SwapiRepository
+  extends SwapiRepository<Film>
   implements FilmsRepository
 {
   constructor(
@@ -29,7 +29,7 @@ export class SwapiFilmsRepository
     return {
       title: response.title,
       episodeId: response.episode_id,
-      openingCrawl: response.opening_crawl,
+      opening: response.opening_crawl,
       director: response.director,
       producer: response.producer,
       releasedAt: response.release_date,
@@ -40,24 +40,6 @@ export class SwapiFilmsRepository
       createdAt: response.created,
       editedAt: response.edited,
     };
-  }
-
-  async findAll(): Promise<Film[]> {
-    const films: Film[] = [];
-
-    let page = 1;
-    let numberPages = Number.MAX_VALUE;
-
-    while (page <= numberPages) {
-      const collection = await this.find({ page });
-
-      films.push(...collection.data);
-
-      page++;
-      numberPages = collection.numberPages;
-    }
-
-    return films;
   }
 
   async find(criteria: FilmsSearchCriteria): Promise<Collection<Film>> {

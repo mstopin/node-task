@@ -17,7 +17,7 @@ import { PlanetsSearchCriteria } from '../planets.search-criteria';
 
 @Injectable()
 export class SwapiPlanetsRepository
-  extends SwapiRepository
+  extends SwapiRepository<Planet>
   implements PlanetsRepository
 {
   constructor(

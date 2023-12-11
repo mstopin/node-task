@@ -17,7 +17,7 @@ import { StarshipsSearchCriteria } from '../starships.search-criteria';
 
 @Injectable()
 export class SwapiStarshipsRepository
-  extends SwapiRepository
+  extends SwapiRepository<Starship>
   implements StarshipsRepository
 {
   constructor(

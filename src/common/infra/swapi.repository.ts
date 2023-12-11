@@ -1,7 +1,8 @@
 import { ConfigService } from '@nestjs/config';
+import { Collection } from 'common/collection';
 import { SearchCriteria } from 'common/search-criteria';
 import { URL } from 'node:url';
-export abstract class SwapiRepository {
+export abstract class SwapiRepository<T> {
   protected readonly URL: string;
 
   constructor(configService: ConfigService, endpoint: string) {
@@ -31,4 +32,24 @@ export abstract class SwapiRepository {
 
     return url.href;
   }
+
+  async findAll(): Promise<T[]> {
+    const films: T[] = [];
+
+    let page = 1;
+    let numberPages = Number.MAX_VALUE;
+
+    while (page <= numberPages) {
+      const collection = await this.find({ page });
+
+      films.push(...collection.data);
+
+      page++;
+      numberPages = collection.numberPages;
+    }
+
+    return films;
+  }
+
+  abstract find(criteria: SearchCriteria): Promise<Collection<T>>;
 }

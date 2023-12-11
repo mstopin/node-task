@@ -4,9 +4,10 @@ import { FILMS_REPOSITORY } from './films.repository';
 import { SwapiFilmsRepository } from './impl/swapi.films.repository';
 import { FilmsController } from './rest/films.controller';
 import { HttpModule } from '@nestjs/axios';
+import { PeopleModule } from 'modules/people/vehicles.module';
 
 @Module({
-  imports: [HttpModule],
+  imports: [HttpModule, PeopleModule],
   controllers: [FilmsController],
   providers: [
     FilmsService,

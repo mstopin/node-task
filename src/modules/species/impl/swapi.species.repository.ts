@@ -17,7 +17,7 @@ import { SpeciesSearchCriteria } from '../species.search-criteria';
 
 @Injectable()
 export class SwapiSpeciesRepository
-  extends SwapiRepository
+  extends SwapiRepository<Species>
   implements SpeciesRepository
 {
   constructor(
