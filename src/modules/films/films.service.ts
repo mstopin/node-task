@@ -48,7 +48,7 @@ export class FilmsService {
     return openingsUniqueWords;
   }
 
-  async findMostPopularOpeningsCharacter(): Promise<[string, number][]> {
+  async findMostPopularOpeningsCharacter(): Promise<string[]> {
     const people = await this.peopleService.findAll();
     const openings = await this.findAllNormalizedOpenings();
     const peopleOpeningsOccurences = new Map<string, number>();
@@ -74,6 +74,7 @@ export class FilmsService {
         }
 
         return result;
-      }, []);
+      }, [])
+      .map((peopleOccurences) => peopleOccurences[0]);
   }
 }

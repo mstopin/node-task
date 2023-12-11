@@ -15,6 +15,7 @@ import { ConfigService } from '@nestjs/config';
 import { ApiNotFoundResponse, ApiOkResponse, ApiQuery } from '@nestjs/swagger';
 import { ApiOkCollectionResponse } from 'common/rest/api-ok-collection.response';
 import { UniqueWordsResponse } from './unique-words.response';
+import { MostPopularCharactersResponse } from './most-popular-characters.response';
 
 @Controller('/films')
 export class FilmsController {
@@ -30,10 +31,10 @@ export class FilmsController {
   @Get('/openings-unique-words')
   @ApiOkResponse({
     description:
-      'returs an array of pairs of unique words from all films openings paired with their number of occurrences in the text',
+      'Returs an array of pairs of unique words from all films openings paired with their number of occurrences in the text',
     type: UniqueWordsResponse,
   })
-  async findOpeningsUniqueWordsWithOccurences() {
+  async findOpeningsUniqueWordsWithOccurences(): Promise<UniqueWordsResponse> {
     const openingsUniqueWords =
       await this.filmsService.findOpeningsUniqueWordsWithOccurences();
 
@@ -41,11 +42,15 @@ export class FilmsController {
   }
 
   @Get('/most-popular-openings-character')
-  async findMostPopularOpeningsCharacter() {
-    const findMostPopularOpeningsCharacter =
+  @ApiOkResponse({
+    description:
+      'Returns an array of people that appear the most often across all film openings',
+  })
+  async findMostPopularOpeningsCharacter(): Promise<MostPopularCharactersResponse> {
+    const characters =
       await this.filmsService.findMostPopularOpeningsCharacter();
 
-    return findMostPopularOpeningsCharacter;
+    return new MostPopularCharactersResponse(characters);
   }
 
   @Get()
