@@ -42,6 +42,24 @@ export class SwapiFilmsRepository
     };
   }
 
+  async findAll(): Promise<Film[]> {
+    const films: Film[] = [];
+
+    let page = 1;
+    let numberPages = Number.MAX_VALUE;
+
+    while (page <= numberPages) {
+      const collection = await this.find({ page });
+
+      films.push(...collection.data);
+
+      page++;
+      numberPages = collection.numberPages;
+    }
+
+    return films;
+  }
+
   async find(criteria: FilmsSearchCriteria): Promise<Collection<Film>> {
     const cacheKey = `films:page=${criteria.page}${
       criteria.title ? `:title=${criteria.title}` : ''

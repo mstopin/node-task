@@ -14,6 +14,7 @@ import { Film } from '../film';
 import { ConfigService } from '@nestjs/config';
 import { ApiNotFoundResponse, ApiOkResponse, ApiQuery } from '@nestjs/swagger';
 import { ApiOkCollectionResponse } from 'common/rest/api-ok-collection.response';
+import { UniqueWordsResponse } from './unique-words.response';
 
 @Controller('/films')
 export class FilmsController {
@@ -24,6 +25,19 @@ export class FilmsController {
     configService: ConfigService,
   ) {
     this.APP_URL = configService.getOrThrow('APP_URL');
+  }
+
+  @Get('/openings-unique-words')
+  @ApiOkResponse({
+    description:
+      'returs an array of pairs of unique words from all films openings paired with their number of occurrences in the text',
+    type: UniqueWordsResponse,
+  })
+  async findOpeningsUniqueWordsWithOccurences() {
+    const openingsUniqueWords =
+      await this.filmsService.findOpeningsUniqueWordsWithOccurences();
+
+    return new UniqueWordsResponse(openingsUniqueWords);
   }
 
   @Get()
